@@ -19,6 +19,27 @@ exports.deleteUser = functions
         });
     });
 
+// Updates a user's email address in auth
+exports.updateUserEmail = functions
+    .region('europe-west1')
+    .firestore
+    .document('users/{userID}')
+    .onUpdate((change, contxt) => {
+        const emailBefore = change.before.data().email;
+        const emailAfter = change.after.data().email;
+
+        if(emailBefore !== emailAfter) {
+            return admin.auth().getUserByEmail(emailBefore)
+            .then((userRecord) => {
+                const userUID = userRecord.toJSON().uid;
+                return admin.auth().updateUser(userUID, {
+                    email: emailAfter
+                });
+            });
+        }
+        return null;
+    });
+
 // Sends a notification to a topic with the name {appointmentID}
 exports.sendNotification = functions
     .region('europe-west1')
