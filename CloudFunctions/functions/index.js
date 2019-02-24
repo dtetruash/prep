@@ -4,6 +4,22 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+// Deletes a user from auth when a user document is deleted
+exports.deleteUser = functions
+    .region('europe-west1')
+    .firestore
+    .document('users/{userID}')
+    .onDelete((snapshot, context) => {
+        const email = snapshot.data().email;
+    
+        return admin.auth().getUserByEmail(email)
+        .then((userRecord) => {
+            const userID = userRecord.toJSON().uid;
+            return admin.auth().deleteUser(userID);
+        });
+    });
+
+// Sends a notification to a topic with the name {appointmentID}
 exports.sendNotification = functions
     .region('europe-west1')
     .firestore
@@ -27,4 +43,4 @@ exports.sendNotification = functions
                 .sendToTopic('/topics/' + appointmentID, notificationContent);
         }
         return null;
-    })
+    });
