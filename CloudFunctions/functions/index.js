@@ -14,8 +14,8 @@ exports.deleteUser = functions
     
         return admin.auth().getUserByEmail(email)
         .then((userRecord) => {
-            const userID = userRecord.toJSON().uid;
-            return admin.auth().deleteUser(userID);
+            const userUID = userRecord.toJSON().uid;
+            return admin.auth().deleteUser(userUID);
         });
     });
 
@@ -27,7 +27,7 @@ exports.sendNotification = functions
     .onCreate((snapshot, context) => {
         if (!snapshot.data().isPatient) {
             const appointmentID = context.params.appointmentID;
-            const messageID = context.params.messageID;
+            //const messageID = context.params.messageID;
 
             const notificationContent = {
                 notification: {
