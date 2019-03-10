@@ -48,7 +48,8 @@ exports.sendNotification = functions
         const notificationContent = {
             'notification': {
                 'title': 'Prep',
-                'body': appointmentID + ': You have a new message!',
+                'body': appointmentID + ': You have unread messages!',
+                'tag': appointmentID,
             },
             'data': {
                 'click_action': 'FLUTTER_NOTIFICATION_CLICK',
@@ -57,7 +58,8 @@ exports.sendNotification = functions
             },
         };
 
-        return (snapshot.data().isPatient) ? null
+        return (snapshot.data().isPatient)
+            ? null
             : admin
             .messaging()
             .sendToTopic(appointmentID, notificationContent);
