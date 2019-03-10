@@ -45,18 +45,20 @@ exports.sendNotification = functions
     .document('appointments/{appointmentID}/messages/{messageID}')
     .onCreate((snapshot, context) => {
         const appointmentID = context.params.appointmentID;
-        //const messageID = context.params.messageID;
         const notificationContent = {
-            notification: {
-                title: "/*App name */",
-                body: "You have a new message!",
-                icon: "default",
-                click_action: "/*Package */_TARGET_NOTIFICATION"
-            }
+            'notification': {
+                'title': 'Prep',
+                'body': appointmentID + ': You have a new message!',
+            },
+            'data': {
+                'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                'sound': 'default',
+                'status': 'done',
+            },
         };
 
         return (snapshot.data().isPatient) ? null
             : admin
             .messaging()
-            .sendToTopic('/topics/' + appointmentID, notificationContent);
+            .sendToTopic(appointmentID, notificationContent);
     });
